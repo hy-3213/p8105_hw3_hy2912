@@ -1,0 +1,15 @@
+---
+title: "p8105_hw3_hy2912"
+author: "Helen Yousaf"
+date: "2024-10-04"
+output: html_document
+---
+
+# Problem 1 
+#### NY NOAA Data 
+```{r}
+library(p8105.datasets)
+data("ny_noaa")
+```
+
+
