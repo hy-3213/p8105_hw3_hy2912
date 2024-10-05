@@ -26,6 +26,8 @@ MIMS_dg_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw3_hy2912/MIMS.d
 names(MIMS_dg_df)
 janitor::clean_names(MIMS_dg_df)
 ```
+# Problem 2 
+#### MIMS Data
 
 Loading MIMS Accelerometer data 
 ```{r}
@@ -36,7 +38,9 @@ names(MIMS_ac_df)
 janitor::clean_names(MIMS_ac_df)
 ```
 
-# Problem 3 Citi Bike Data 
+# Problem 3
+#### Citi Bike Data 
+
 Loading data sets 
 ```{r}
 Jan2020_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw3_hy2912/Jan2020.CITI.csv", na = c(".", "NA", ""))
