@@ -4,12 +4,62 @@ author: "Helen Yousaf"
 date: "2024-10-04"
 output: html_document
 ---
+```{r}
+library(dplyr) 
+library(readr)
+library(tidyverse)
+library(ggridges)
+```
 
 # Problem 1 
 #### NY NOAA Data 
 ```{r}
 library(p8105.datasets)
-data("ny_noaa")
+  data("ny_noaa")
+```
+
+Importing MIMS Demographic data
+```{r}
+MIMS_dg_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw3_hy2912/MIMS.dg.csv", skip = 4, na = c(".", "NA", ""))
+```
+```{r}
+names(MIMS_dg_df)
+janitor::clean_names(MIMS_dg_df)
+```
+
+Loading MIMS Accelerometer data 
+```{r}
+MIMS_ac_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw3_hy2912/MIMS.ac.csv", na = c(".", "NA", ""))
+```
+```{r}
+names(MIMS_ac_df)
+janitor::clean_names(MIMS_ac_df)
+```
+
+# Problem 3 Citi Bike Data 
+Loading data sets 
+```{r}
+Jan2020_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw3_hy2912/Jan2020.CITI.csv", na = c(".", "NA", ""))
+Jul2020_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw3_hy2912/July2020.CITI.csv", na = c(".", "NA", ""))
+Jan2024_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw3_hy2912/Jan2024.CITI.csv", na = c(".", "NA", ""))
+Jul2024_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw3_hy2912/July2024.CITI.csv", na = c(".", "NA", ""))
+```
+Basic cleaning of data sets
+```{r}
+Jan2020_df = janitor::clean_names (Jan2020_df)
+names(Jan2020_df)
+```
+```{r}
+Jul2020_df = janitor::clean_names (Jul2020_df)
+names(Jul2020_df)
+```
+```{r}
+Jan2024_df = janitor::clean_names (Jan2024_df)
+names(Jan2024_df)
+```
+```{r}
+Jul2024_df = janitor::clean_names (Jul2024_df)
+names(Jul2024_df)
 ```
 
 

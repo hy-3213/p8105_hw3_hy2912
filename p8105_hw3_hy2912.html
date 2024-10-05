@@ -357,13 +357,358 @@ display: none;
 </div>
 
 
+<pre class="r"><code>library(dplyr) </code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(readr)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(ggridges)</code></pre>
 <div id="problem-1" class="section level1">
 <h1>Problem 1</h1>
 <div id="ny-noaa-data" class="section level4">
 <h4>NY NOAA Data</h4>
 <pre class="r"><code>library(p8105.datasets)
-data(&quot;ny_noaa&quot;)</code></pre>
+  data(&quot;ny_noaa&quot;)</code></pre>
+<p>Importing MIMS Demographic data</p>
+<pre class="r"><code>MIMS_dg_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw3_hy2912/MIMS.dg.csv&quot;, skip = 4, na = c(&quot;.&quot;, &quot;NA&quot;, &quot;&quot;))</code></pre>
+<pre><code>## Rows: 250 Columns: 5
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## dbl (5): SEQN, sex, age, BMI, education
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>names(MIMS_dg_df)</code></pre>
+<pre><code>## [1] &quot;SEQN&quot;      &quot;sex&quot;       &quot;age&quot;       &quot;BMI&quot;       &quot;education&quot;</code></pre>
+<pre class="r"><code>janitor::clean_names(MIMS_dg_df)</code></pre>
+<pre><code>## # A tibble: 250 × 5
+##     seqn   sex   age   bmi education
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
+##  1 62161     1    22  23.3         2
+##  2 62164     2    44  23.2         3
+##  3 62169     1    21  20.1         2
+##  4 62174     1    80  33.9         3
+##  5 62177     1    51  20.1         2
+##  6 62178     1    80  28.5         2
+##  7 62180     1    35  27.9         3
+##  8 62184     1    26  22.1         2
+##  9 62186     2    17  22.9        NA
+## 10 62189     2    30  22.4         3
+## # ℹ 240 more rows</code></pre>
+<p>Loading MIMS Accelerometer data</p>
+<pre class="r"><code>MIMS_ac_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw3_hy2912/MIMS.ac.csv&quot;, na = c(&quot;.&quot;, &quot;NA&quot;, &quot;&quot;))</code></pre>
+<pre><code>## Rows: 250 Columns: 1441
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## dbl (1441): SEQN, min1, min2, min3, min4, min5, min6, min7, min8, min9, min1...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>names(MIMS_ac_df)</code></pre>
+<pre><code>##    [1] &quot;SEQN&quot;    &quot;min1&quot;    &quot;min2&quot;    &quot;min3&quot;    &quot;min4&quot;    &quot;min5&quot;    &quot;min6&quot;   
+##    [8] &quot;min7&quot;    &quot;min8&quot;    &quot;min9&quot;    &quot;min10&quot;   &quot;min11&quot;   &quot;min12&quot;   &quot;min13&quot;  
+##   [15] &quot;min14&quot;   &quot;min15&quot;   &quot;min16&quot;   &quot;min17&quot;   &quot;min18&quot;   &quot;min19&quot;   &quot;min20&quot;  
+##   [22] &quot;min21&quot;   &quot;min22&quot;   &quot;min23&quot;   &quot;min24&quot;   &quot;min25&quot;   &quot;min26&quot;   &quot;min27&quot;  
+##   [29] &quot;min28&quot;   &quot;min29&quot;   &quot;min30&quot;   &quot;min31&quot;   &quot;min32&quot;   &quot;min33&quot;   &quot;min34&quot;  
+##   [36] &quot;min35&quot;   &quot;min36&quot;   &quot;min37&quot;   &quot;min38&quot;   &quot;min39&quot;   &quot;min40&quot;   &quot;min41&quot;  
+##   [43] &quot;min42&quot;   &quot;min43&quot;   &quot;min44&quot;   &quot;min45&quot;   &quot;min46&quot;   &quot;min47&quot;   &quot;min48&quot;  
+##   [50] &quot;min49&quot;   &quot;min50&quot;   &quot;min51&quot;   &quot;min52&quot;   &quot;min53&quot;   &quot;min54&quot;   &quot;min55&quot;  
+##   [57] &quot;min56&quot;   &quot;min57&quot;   &quot;min58&quot;   &quot;min59&quot;   &quot;min60&quot;   &quot;min61&quot;   &quot;min62&quot;  
+##   [64] &quot;min63&quot;   &quot;min64&quot;   &quot;min65&quot;   &quot;min66&quot;   &quot;min67&quot;   &quot;min68&quot;   &quot;min69&quot;  
+##   [71] &quot;min70&quot;   &quot;min71&quot;   &quot;min72&quot;   &quot;min73&quot;   &quot;min74&quot;   &quot;min75&quot;   &quot;min76&quot;  
+##   [78] &quot;min77&quot;   &quot;min78&quot;   &quot;min79&quot;   &quot;min80&quot;   &quot;min81&quot;   &quot;min82&quot;   &quot;min83&quot;  
+##   [85] &quot;min84&quot;   &quot;min85&quot;   &quot;min86&quot;   &quot;min87&quot;   &quot;min88&quot;   &quot;min89&quot;   &quot;min90&quot;  
+##   [92] &quot;min91&quot;   &quot;min92&quot;   &quot;min93&quot;   &quot;min94&quot;   &quot;min95&quot;   &quot;min96&quot;   &quot;min97&quot;  
+##   [99] &quot;min98&quot;   &quot;min99&quot;   &quot;min100&quot;  &quot;min101&quot;  &quot;min102&quot;  &quot;min103&quot;  &quot;min104&quot; 
+##  [106] &quot;min105&quot;  &quot;min106&quot;  &quot;min107&quot;  &quot;min108&quot;  &quot;min109&quot;  &quot;min110&quot;  &quot;min111&quot; 
+##  [113] &quot;min112&quot;  &quot;min113&quot;  &quot;min114&quot;  &quot;min115&quot;  &quot;min116&quot;  &quot;min117&quot;  &quot;min118&quot; 
+##  [120] &quot;min119&quot;  &quot;min120&quot;  &quot;min121&quot;  &quot;min122&quot;  &quot;min123&quot;  &quot;min124&quot;  &quot;min125&quot; 
+##  [127] &quot;min126&quot;  &quot;min127&quot;  &quot;min128&quot;  &quot;min129&quot;  &quot;min130&quot;  &quot;min131&quot;  &quot;min132&quot; 
+##  [134] &quot;min133&quot;  &quot;min134&quot;  &quot;min135&quot;  &quot;min136&quot;  &quot;min137&quot;  &quot;min138&quot;  &quot;min139&quot; 
+##  [141] &quot;min140&quot;  &quot;min141&quot;  &quot;min142&quot;  &quot;min143&quot;  &quot;min144&quot;  &quot;min145&quot;  &quot;min146&quot; 
+##  [148] &quot;min147&quot;  &quot;min148&quot;  &quot;min149&quot;  &quot;min150&quot;  &quot;min151&quot;  &quot;min152&quot;  &quot;min153&quot; 
+##  [155] &quot;min154&quot;  &quot;min155&quot;  &quot;min156&quot;  &quot;min157&quot;  &quot;min158&quot;  &quot;min159&quot;  &quot;min160&quot; 
+##  [162] &quot;min161&quot;  &quot;min162&quot;  &quot;min163&quot;  &quot;min164&quot;  &quot;min165&quot;  &quot;min166&quot;  &quot;min167&quot; 
+##  [169] &quot;min168&quot;  &quot;min169&quot;  &quot;min170&quot;  &quot;min171&quot;  &quot;min172&quot;  &quot;min173&quot;  &quot;min174&quot; 
+##  [176] &quot;min175&quot;  &quot;min176&quot;  &quot;min177&quot;  &quot;min178&quot;  &quot;min179&quot;  &quot;min180&quot;  &quot;min181&quot; 
+##  [183] &quot;min182&quot;  &quot;min183&quot;  &quot;min184&quot;  &quot;min185&quot;  &quot;min186&quot;  &quot;min187&quot;  &quot;min188&quot; 
+##  [190] &quot;min189&quot;  &quot;min190&quot;  &quot;min191&quot;  &quot;min192&quot;  &quot;min193&quot;  &quot;min194&quot;  &quot;min195&quot; 
+##  [197] &quot;min196&quot;  &quot;min197&quot;  &quot;min198&quot;  &quot;min199&quot;  &quot;min200&quot;  &quot;min201&quot;  &quot;min202&quot; 
+##  [204] &quot;min203&quot;  &quot;min204&quot;  &quot;min205&quot;  &quot;min206&quot;  &quot;min207&quot;  &quot;min208&quot;  &quot;min209&quot; 
+##  [211] &quot;min210&quot;  &quot;min211&quot;  &quot;min212&quot;  &quot;min213&quot;  &quot;min214&quot;  &quot;min215&quot;  &quot;min216&quot; 
+##  [218] &quot;min217&quot;  &quot;min218&quot;  &quot;min219&quot;  &quot;min220&quot;  &quot;min221&quot;  &quot;min222&quot;  &quot;min223&quot; 
+##  [225] &quot;min224&quot;  &quot;min225&quot;  &quot;min226&quot;  &quot;min227&quot;  &quot;min228&quot;  &quot;min229&quot;  &quot;min230&quot; 
+##  [232] &quot;min231&quot;  &quot;min232&quot;  &quot;min233&quot;  &quot;min234&quot;  &quot;min235&quot;  &quot;min236&quot;  &quot;min237&quot; 
+##  [239] &quot;min238&quot;  &quot;min239&quot;  &quot;min240&quot;  &quot;min241&quot;  &quot;min242&quot;  &quot;min243&quot;  &quot;min244&quot; 
+##  [246] &quot;min245&quot;  &quot;min246&quot;  &quot;min247&quot;  &quot;min248&quot;  &quot;min249&quot;  &quot;min250&quot;  &quot;min251&quot; 
+##  [253] &quot;min252&quot;  &quot;min253&quot;  &quot;min254&quot;  &quot;min255&quot;  &quot;min256&quot;  &quot;min257&quot;  &quot;min258&quot; 
+##  [260] &quot;min259&quot;  &quot;min260&quot;  &quot;min261&quot;  &quot;min262&quot;  &quot;min263&quot;  &quot;min264&quot;  &quot;min265&quot; 
+##  [267] &quot;min266&quot;  &quot;min267&quot;  &quot;min268&quot;  &quot;min269&quot;  &quot;min270&quot;  &quot;min271&quot;  &quot;min272&quot; 
+##  [274] &quot;min273&quot;  &quot;min274&quot;  &quot;min275&quot;  &quot;min276&quot;  &quot;min277&quot;  &quot;min278&quot;  &quot;min279&quot; 
+##  [281] &quot;min280&quot;  &quot;min281&quot;  &quot;min282&quot;  &quot;min283&quot;  &quot;min284&quot;  &quot;min285&quot;  &quot;min286&quot; 
+##  [288] &quot;min287&quot;  &quot;min288&quot;  &quot;min289&quot;  &quot;min290&quot;  &quot;min291&quot;  &quot;min292&quot;  &quot;min293&quot; 
+##  [295] &quot;min294&quot;  &quot;min295&quot;  &quot;min296&quot;  &quot;min297&quot;  &quot;min298&quot;  &quot;min299&quot;  &quot;min300&quot; 
+##  [302] &quot;min301&quot;  &quot;min302&quot;  &quot;min303&quot;  &quot;min304&quot;  &quot;min305&quot;  &quot;min306&quot;  &quot;min307&quot; 
+##  [309] &quot;min308&quot;  &quot;min309&quot;  &quot;min310&quot;  &quot;min311&quot;  &quot;min312&quot;  &quot;min313&quot;  &quot;min314&quot; 
+##  [316] &quot;min315&quot;  &quot;min316&quot;  &quot;min317&quot;  &quot;min318&quot;  &quot;min319&quot;  &quot;min320&quot;  &quot;min321&quot; 
+##  [323] &quot;min322&quot;  &quot;min323&quot;  &quot;min324&quot;  &quot;min325&quot;  &quot;min326&quot;  &quot;min327&quot;  &quot;min328&quot; 
+##  [330] &quot;min329&quot;  &quot;min330&quot;  &quot;min331&quot;  &quot;min332&quot;  &quot;min333&quot;  &quot;min334&quot;  &quot;min335&quot; 
+##  [337] &quot;min336&quot;  &quot;min337&quot;  &quot;min338&quot;  &quot;min339&quot;  &quot;min340&quot;  &quot;min341&quot;  &quot;min342&quot; 
+##  [344] &quot;min343&quot;  &quot;min344&quot;  &quot;min345&quot;  &quot;min346&quot;  &quot;min347&quot;  &quot;min348&quot;  &quot;min349&quot; 
+##  [351] &quot;min350&quot;  &quot;min351&quot;  &quot;min352&quot;  &quot;min353&quot;  &quot;min354&quot;  &quot;min355&quot;  &quot;min356&quot; 
+##  [358] &quot;min357&quot;  &quot;min358&quot;  &quot;min359&quot;  &quot;min360&quot;  &quot;min361&quot;  &quot;min362&quot;  &quot;min363&quot; 
+##  [365] &quot;min364&quot;  &quot;min365&quot;  &quot;min366&quot;  &quot;min367&quot;  &quot;min368&quot;  &quot;min369&quot;  &quot;min370&quot; 
+##  [372] &quot;min371&quot;  &quot;min372&quot;  &quot;min373&quot;  &quot;min374&quot;  &quot;min375&quot;  &quot;min376&quot;  &quot;min377&quot; 
+##  [379] &quot;min378&quot;  &quot;min379&quot;  &quot;min380&quot;  &quot;min381&quot;  &quot;min382&quot;  &quot;min383&quot;  &quot;min384&quot; 
+##  [386] &quot;min385&quot;  &quot;min386&quot;  &quot;min387&quot;  &quot;min388&quot;  &quot;min389&quot;  &quot;min390&quot;  &quot;min391&quot; 
+##  [393] &quot;min392&quot;  &quot;min393&quot;  &quot;min394&quot;  &quot;min395&quot;  &quot;min396&quot;  &quot;min397&quot;  &quot;min398&quot; 
+##  [400] &quot;min399&quot;  &quot;min400&quot;  &quot;min401&quot;  &quot;min402&quot;  &quot;min403&quot;  &quot;min404&quot;  &quot;min405&quot; 
+##  [407] &quot;min406&quot;  &quot;min407&quot;  &quot;min408&quot;  &quot;min409&quot;  &quot;min410&quot;  &quot;min411&quot;  &quot;min412&quot; 
+##  [414] &quot;min413&quot;  &quot;min414&quot;  &quot;min415&quot;  &quot;min416&quot;  &quot;min417&quot;  &quot;min418&quot;  &quot;min419&quot; 
+##  [421] &quot;min420&quot;  &quot;min421&quot;  &quot;min422&quot;  &quot;min423&quot;  &quot;min424&quot;  &quot;min425&quot;  &quot;min426&quot; 
+##  [428] &quot;min427&quot;  &quot;min428&quot;  &quot;min429&quot;  &quot;min430&quot;  &quot;min431&quot;  &quot;min432&quot;  &quot;min433&quot; 
+##  [435] &quot;min434&quot;  &quot;min435&quot;  &quot;min436&quot;  &quot;min437&quot;  &quot;min438&quot;  &quot;min439&quot;  &quot;min440&quot; 
+##  [442] &quot;min441&quot;  &quot;min442&quot;  &quot;min443&quot;  &quot;min444&quot;  &quot;min445&quot;  &quot;min446&quot;  &quot;min447&quot; 
+##  [449] &quot;min448&quot;  &quot;min449&quot;  &quot;min450&quot;  &quot;min451&quot;  &quot;min452&quot;  &quot;min453&quot;  &quot;min454&quot; 
+##  [456] &quot;min455&quot;  &quot;min456&quot;  &quot;min457&quot;  &quot;min458&quot;  &quot;min459&quot;  &quot;min460&quot;  &quot;min461&quot; 
+##  [463] &quot;min462&quot;  &quot;min463&quot;  &quot;min464&quot;  &quot;min465&quot;  &quot;min466&quot;  &quot;min467&quot;  &quot;min468&quot; 
+##  [470] &quot;min469&quot;  &quot;min470&quot;  &quot;min471&quot;  &quot;min472&quot;  &quot;min473&quot;  &quot;min474&quot;  &quot;min475&quot; 
+##  [477] &quot;min476&quot;  &quot;min477&quot;  &quot;min478&quot;  &quot;min479&quot;  &quot;min480&quot;  &quot;min481&quot;  &quot;min482&quot; 
+##  [484] &quot;min483&quot;  &quot;min484&quot;  &quot;min485&quot;  &quot;min486&quot;  &quot;min487&quot;  &quot;min488&quot;  &quot;min489&quot; 
+##  [491] &quot;min490&quot;  &quot;min491&quot;  &quot;min492&quot;  &quot;min493&quot;  &quot;min494&quot;  &quot;min495&quot;  &quot;min496&quot; 
+##  [498] &quot;min497&quot;  &quot;min498&quot;  &quot;min499&quot;  &quot;min500&quot;  &quot;min501&quot;  &quot;min502&quot;  &quot;min503&quot; 
+##  [505] &quot;min504&quot;  &quot;min505&quot;  &quot;min506&quot;  &quot;min507&quot;  &quot;min508&quot;  &quot;min509&quot;  &quot;min510&quot; 
+##  [512] &quot;min511&quot;  &quot;min512&quot;  &quot;min513&quot;  &quot;min514&quot;  &quot;min515&quot;  &quot;min516&quot;  &quot;min517&quot; 
+##  [519] &quot;min518&quot;  &quot;min519&quot;  &quot;min520&quot;  &quot;min521&quot;  &quot;min522&quot;  &quot;min523&quot;  &quot;min524&quot; 
+##  [526] &quot;min525&quot;  &quot;min526&quot;  &quot;min527&quot;  &quot;min528&quot;  &quot;min529&quot;  &quot;min530&quot;  &quot;min531&quot; 
+##  [533] &quot;min532&quot;  &quot;min533&quot;  &quot;min534&quot;  &quot;min535&quot;  &quot;min536&quot;  &quot;min537&quot;  &quot;min538&quot; 
+##  [540] &quot;min539&quot;  &quot;min540&quot;  &quot;min541&quot;  &quot;min542&quot;  &quot;min543&quot;  &quot;min544&quot;  &quot;min545&quot; 
+##  [547] &quot;min546&quot;  &quot;min547&quot;  &quot;min548&quot;  &quot;min549&quot;  &quot;min550&quot;  &quot;min551&quot;  &quot;min552&quot; 
+##  [554] &quot;min553&quot;  &quot;min554&quot;  &quot;min555&quot;  &quot;min556&quot;  &quot;min557&quot;  &quot;min558&quot;  &quot;min559&quot; 
+##  [561] &quot;min560&quot;  &quot;min561&quot;  &quot;min562&quot;  &quot;min563&quot;  &quot;min564&quot;  &quot;min565&quot;  &quot;min566&quot; 
+##  [568] &quot;min567&quot;  &quot;min568&quot;  &quot;min569&quot;  &quot;min570&quot;  &quot;min571&quot;  &quot;min572&quot;  &quot;min573&quot; 
+##  [575] &quot;min574&quot;  &quot;min575&quot;  &quot;min576&quot;  &quot;min577&quot;  &quot;min578&quot;  &quot;min579&quot;  &quot;min580&quot; 
+##  [582] &quot;min581&quot;  &quot;min582&quot;  &quot;min583&quot;  &quot;min584&quot;  &quot;min585&quot;  &quot;min586&quot;  &quot;min587&quot; 
+##  [589] &quot;min588&quot;  &quot;min589&quot;  &quot;min590&quot;  &quot;min591&quot;  &quot;min592&quot;  &quot;min593&quot;  &quot;min594&quot; 
+##  [596] &quot;min595&quot;  &quot;min596&quot;  &quot;min597&quot;  &quot;min598&quot;  &quot;min599&quot;  &quot;min600&quot;  &quot;min601&quot; 
+##  [603] &quot;min602&quot;  &quot;min603&quot;  &quot;min604&quot;  &quot;min605&quot;  &quot;min606&quot;  &quot;min607&quot;  &quot;min608&quot; 
+##  [610] &quot;min609&quot;  &quot;min610&quot;  &quot;min611&quot;  &quot;min612&quot;  &quot;min613&quot;  &quot;min614&quot;  &quot;min615&quot; 
+##  [617] &quot;min616&quot;  &quot;min617&quot;  &quot;min618&quot;  &quot;min619&quot;  &quot;min620&quot;  &quot;min621&quot;  &quot;min622&quot; 
+##  [624] &quot;min623&quot;  &quot;min624&quot;  &quot;min625&quot;  &quot;min626&quot;  &quot;min627&quot;  &quot;min628&quot;  &quot;min629&quot; 
+##  [631] &quot;min630&quot;  &quot;min631&quot;  &quot;min632&quot;  &quot;min633&quot;  &quot;min634&quot;  &quot;min635&quot;  &quot;min636&quot; 
+##  [638] &quot;min637&quot;  &quot;min638&quot;  &quot;min639&quot;  &quot;min640&quot;  &quot;min641&quot;  &quot;min642&quot;  &quot;min643&quot; 
+##  [645] &quot;min644&quot;  &quot;min645&quot;  &quot;min646&quot;  &quot;min647&quot;  &quot;min648&quot;  &quot;min649&quot;  &quot;min650&quot; 
+##  [652] &quot;min651&quot;  &quot;min652&quot;  &quot;min653&quot;  &quot;min654&quot;  &quot;min655&quot;  &quot;min656&quot;  &quot;min657&quot; 
+##  [659] &quot;min658&quot;  &quot;min659&quot;  &quot;min660&quot;  &quot;min661&quot;  &quot;min662&quot;  &quot;min663&quot;  &quot;min664&quot; 
+##  [666] &quot;min665&quot;  &quot;min666&quot;  &quot;min667&quot;  &quot;min668&quot;  &quot;min669&quot;  &quot;min670&quot;  &quot;min671&quot; 
+##  [673] &quot;min672&quot;  &quot;min673&quot;  &quot;min674&quot;  &quot;min675&quot;  &quot;min676&quot;  &quot;min677&quot;  &quot;min678&quot; 
+##  [680] &quot;min679&quot;  &quot;min680&quot;  &quot;min681&quot;  &quot;min682&quot;  &quot;min683&quot;  &quot;min684&quot;  &quot;min685&quot; 
+##  [687] &quot;min686&quot;  &quot;min687&quot;  &quot;min688&quot;  &quot;min689&quot;  &quot;min690&quot;  &quot;min691&quot;  &quot;min692&quot; 
+##  [694] &quot;min693&quot;  &quot;min694&quot;  &quot;min695&quot;  &quot;min696&quot;  &quot;min697&quot;  &quot;min698&quot;  &quot;min699&quot; 
+##  [701] &quot;min700&quot;  &quot;min701&quot;  &quot;min702&quot;  &quot;min703&quot;  &quot;min704&quot;  &quot;min705&quot;  &quot;min706&quot; 
+##  [708] &quot;min707&quot;  &quot;min708&quot;  &quot;min709&quot;  &quot;min710&quot;  &quot;min711&quot;  &quot;min712&quot;  &quot;min713&quot; 
+##  [715] &quot;min714&quot;  &quot;min715&quot;  &quot;min716&quot;  &quot;min717&quot;  &quot;min718&quot;  &quot;min719&quot;  &quot;min720&quot; 
+##  [722] &quot;min721&quot;  &quot;min722&quot;  &quot;min723&quot;  &quot;min724&quot;  &quot;min725&quot;  &quot;min726&quot;  &quot;min727&quot; 
+##  [729] &quot;min728&quot;  &quot;min729&quot;  &quot;min730&quot;  &quot;min731&quot;  &quot;min732&quot;  &quot;min733&quot;  &quot;min734&quot; 
+##  [736] &quot;min735&quot;  &quot;min736&quot;  &quot;min737&quot;  &quot;min738&quot;  &quot;min739&quot;  &quot;min740&quot;  &quot;min741&quot; 
+##  [743] &quot;min742&quot;  &quot;min743&quot;  &quot;min744&quot;  &quot;min745&quot;  &quot;min746&quot;  &quot;min747&quot;  &quot;min748&quot; 
+##  [750] &quot;min749&quot;  &quot;min750&quot;  &quot;min751&quot;  &quot;min752&quot;  &quot;min753&quot;  &quot;min754&quot;  &quot;min755&quot; 
+##  [757] &quot;min756&quot;  &quot;min757&quot;  &quot;min758&quot;  &quot;min759&quot;  &quot;min760&quot;  &quot;min761&quot;  &quot;min762&quot; 
+##  [764] &quot;min763&quot;  &quot;min764&quot;  &quot;min765&quot;  &quot;min766&quot;  &quot;min767&quot;  &quot;min768&quot;  &quot;min769&quot; 
+##  [771] &quot;min770&quot;  &quot;min771&quot;  &quot;min772&quot;  &quot;min773&quot;  &quot;min774&quot;  &quot;min775&quot;  &quot;min776&quot; 
+##  [778] &quot;min777&quot;  &quot;min778&quot;  &quot;min779&quot;  &quot;min780&quot;  &quot;min781&quot;  &quot;min782&quot;  &quot;min783&quot; 
+##  [785] &quot;min784&quot;  &quot;min785&quot;  &quot;min786&quot;  &quot;min787&quot;  &quot;min788&quot;  &quot;min789&quot;  &quot;min790&quot; 
+##  [792] &quot;min791&quot;  &quot;min792&quot;  &quot;min793&quot;  &quot;min794&quot;  &quot;min795&quot;  &quot;min796&quot;  &quot;min797&quot; 
+##  [799] &quot;min798&quot;  &quot;min799&quot;  &quot;min800&quot;  &quot;min801&quot;  &quot;min802&quot;  &quot;min803&quot;  &quot;min804&quot; 
+##  [806] &quot;min805&quot;  &quot;min806&quot;  &quot;min807&quot;  &quot;min808&quot;  &quot;min809&quot;  &quot;min810&quot;  &quot;min811&quot; 
+##  [813] &quot;min812&quot;  &quot;min813&quot;  &quot;min814&quot;  &quot;min815&quot;  &quot;min816&quot;  &quot;min817&quot;  &quot;min818&quot; 
+##  [820] &quot;min819&quot;  &quot;min820&quot;  &quot;min821&quot;  &quot;min822&quot;  &quot;min823&quot;  &quot;min824&quot;  &quot;min825&quot; 
+##  [827] &quot;min826&quot;  &quot;min827&quot;  &quot;min828&quot;  &quot;min829&quot;  &quot;min830&quot;  &quot;min831&quot;  &quot;min832&quot; 
+##  [834] &quot;min833&quot;  &quot;min834&quot;  &quot;min835&quot;  &quot;min836&quot;  &quot;min837&quot;  &quot;min838&quot;  &quot;min839&quot; 
+##  [841] &quot;min840&quot;  &quot;min841&quot;  &quot;min842&quot;  &quot;min843&quot;  &quot;min844&quot;  &quot;min845&quot;  &quot;min846&quot; 
+##  [848] &quot;min847&quot;  &quot;min848&quot;  &quot;min849&quot;  &quot;min850&quot;  &quot;min851&quot;  &quot;min852&quot;  &quot;min853&quot; 
+##  [855] &quot;min854&quot;  &quot;min855&quot;  &quot;min856&quot;  &quot;min857&quot;  &quot;min858&quot;  &quot;min859&quot;  &quot;min860&quot; 
+##  [862] &quot;min861&quot;  &quot;min862&quot;  &quot;min863&quot;  &quot;min864&quot;  &quot;min865&quot;  &quot;min866&quot;  &quot;min867&quot; 
+##  [869] &quot;min868&quot;  &quot;min869&quot;  &quot;min870&quot;  &quot;min871&quot;  &quot;min872&quot;  &quot;min873&quot;  &quot;min874&quot; 
+##  [876] &quot;min875&quot;  &quot;min876&quot;  &quot;min877&quot;  &quot;min878&quot;  &quot;min879&quot;  &quot;min880&quot;  &quot;min881&quot; 
+##  [883] &quot;min882&quot;  &quot;min883&quot;  &quot;min884&quot;  &quot;min885&quot;  &quot;min886&quot;  &quot;min887&quot;  &quot;min888&quot; 
+##  [890] &quot;min889&quot;  &quot;min890&quot;  &quot;min891&quot;  &quot;min892&quot;  &quot;min893&quot;  &quot;min894&quot;  &quot;min895&quot; 
+##  [897] &quot;min896&quot;  &quot;min897&quot;  &quot;min898&quot;  &quot;min899&quot;  &quot;min900&quot;  &quot;min901&quot;  &quot;min902&quot; 
+##  [904] &quot;min903&quot;  &quot;min904&quot;  &quot;min905&quot;  &quot;min906&quot;  &quot;min907&quot;  &quot;min908&quot;  &quot;min909&quot; 
+##  [911] &quot;min910&quot;  &quot;min911&quot;  &quot;min912&quot;  &quot;min913&quot;  &quot;min914&quot;  &quot;min915&quot;  &quot;min916&quot; 
+##  [918] &quot;min917&quot;  &quot;min918&quot;  &quot;min919&quot;  &quot;min920&quot;  &quot;min921&quot;  &quot;min922&quot;  &quot;min923&quot; 
+##  [925] &quot;min924&quot;  &quot;min925&quot;  &quot;min926&quot;  &quot;min927&quot;  &quot;min928&quot;  &quot;min929&quot;  &quot;min930&quot; 
+##  [932] &quot;min931&quot;  &quot;min932&quot;  &quot;min933&quot;  &quot;min934&quot;  &quot;min935&quot;  &quot;min936&quot;  &quot;min937&quot; 
+##  [939] &quot;min938&quot;  &quot;min939&quot;  &quot;min940&quot;  &quot;min941&quot;  &quot;min942&quot;  &quot;min943&quot;  &quot;min944&quot; 
+##  [946] &quot;min945&quot;  &quot;min946&quot;  &quot;min947&quot;  &quot;min948&quot;  &quot;min949&quot;  &quot;min950&quot;  &quot;min951&quot; 
+##  [953] &quot;min952&quot;  &quot;min953&quot;  &quot;min954&quot;  &quot;min955&quot;  &quot;min956&quot;  &quot;min957&quot;  &quot;min958&quot; 
+##  [960] &quot;min959&quot;  &quot;min960&quot;  &quot;min961&quot;  &quot;min962&quot;  &quot;min963&quot;  &quot;min964&quot;  &quot;min965&quot; 
+##  [967] &quot;min966&quot;  &quot;min967&quot;  &quot;min968&quot;  &quot;min969&quot;  &quot;min970&quot;  &quot;min971&quot;  &quot;min972&quot; 
+##  [974] &quot;min973&quot;  &quot;min974&quot;  &quot;min975&quot;  &quot;min976&quot;  &quot;min977&quot;  &quot;min978&quot;  &quot;min979&quot; 
+##  [981] &quot;min980&quot;  &quot;min981&quot;  &quot;min982&quot;  &quot;min983&quot;  &quot;min984&quot;  &quot;min985&quot;  &quot;min986&quot; 
+##  [988] &quot;min987&quot;  &quot;min988&quot;  &quot;min989&quot;  &quot;min990&quot;  &quot;min991&quot;  &quot;min992&quot;  &quot;min993&quot; 
+##  [995] &quot;min994&quot;  &quot;min995&quot;  &quot;min996&quot;  &quot;min997&quot;  &quot;min998&quot;  &quot;min999&quot;  &quot;min1000&quot;
+## [1002] &quot;min1001&quot; &quot;min1002&quot; &quot;min1003&quot; &quot;min1004&quot; &quot;min1005&quot; &quot;min1006&quot; &quot;min1007&quot;
+## [1009] &quot;min1008&quot; &quot;min1009&quot; &quot;min1010&quot; &quot;min1011&quot; &quot;min1012&quot; &quot;min1013&quot; &quot;min1014&quot;
+## [1016] &quot;min1015&quot; &quot;min1016&quot; &quot;min1017&quot; &quot;min1018&quot; &quot;min1019&quot; &quot;min1020&quot; &quot;min1021&quot;
+## [1023] &quot;min1022&quot; &quot;min1023&quot; &quot;min1024&quot; &quot;min1025&quot; &quot;min1026&quot; &quot;min1027&quot; &quot;min1028&quot;
+## [1030] &quot;min1029&quot; &quot;min1030&quot; &quot;min1031&quot; &quot;min1032&quot; &quot;min1033&quot; &quot;min1034&quot; &quot;min1035&quot;
+## [1037] &quot;min1036&quot; &quot;min1037&quot; &quot;min1038&quot; &quot;min1039&quot; &quot;min1040&quot; &quot;min1041&quot; &quot;min1042&quot;
+## [1044] &quot;min1043&quot; &quot;min1044&quot; &quot;min1045&quot; &quot;min1046&quot; &quot;min1047&quot; &quot;min1048&quot; &quot;min1049&quot;
+## [1051] &quot;min1050&quot; &quot;min1051&quot; &quot;min1052&quot; &quot;min1053&quot; &quot;min1054&quot; &quot;min1055&quot; &quot;min1056&quot;
+## [1058] &quot;min1057&quot; &quot;min1058&quot; &quot;min1059&quot; &quot;min1060&quot; &quot;min1061&quot; &quot;min1062&quot; &quot;min1063&quot;
+## [1065] &quot;min1064&quot; &quot;min1065&quot; &quot;min1066&quot; &quot;min1067&quot; &quot;min1068&quot; &quot;min1069&quot; &quot;min1070&quot;
+## [1072] &quot;min1071&quot; &quot;min1072&quot; &quot;min1073&quot; &quot;min1074&quot; &quot;min1075&quot; &quot;min1076&quot; &quot;min1077&quot;
+## [1079] &quot;min1078&quot; &quot;min1079&quot; &quot;min1080&quot; &quot;min1081&quot; &quot;min1082&quot; &quot;min1083&quot; &quot;min1084&quot;
+## [1086] &quot;min1085&quot; &quot;min1086&quot; &quot;min1087&quot; &quot;min1088&quot; &quot;min1089&quot; &quot;min1090&quot; &quot;min1091&quot;
+## [1093] &quot;min1092&quot; &quot;min1093&quot; &quot;min1094&quot; &quot;min1095&quot; &quot;min1096&quot; &quot;min1097&quot; &quot;min1098&quot;
+## [1100] &quot;min1099&quot; &quot;min1100&quot; &quot;min1101&quot; &quot;min1102&quot; &quot;min1103&quot; &quot;min1104&quot; &quot;min1105&quot;
+## [1107] &quot;min1106&quot; &quot;min1107&quot; &quot;min1108&quot; &quot;min1109&quot; &quot;min1110&quot; &quot;min1111&quot; &quot;min1112&quot;
+## [1114] &quot;min1113&quot; &quot;min1114&quot; &quot;min1115&quot; &quot;min1116&quot; &quot;min1117&quot; &quot;min1118&quot; &quot;min1119&quot;
+## [1121] &quot;min1120&quot; &quot;min1121&quot; &quot;min1122&quot; &quot;min1123&quot; &quot;min1124&quot; &quot;min1125&quot; &quot;min1126&quot;
+## [1128] &quot;min1127&quot; &quot;min1128&quot; &quot;min1129&quot; &quot;min1130&quot; &quot;min1131&quot; &quot;min1132&quot; &quot;min1133&quot;
+## [1135] &quot;min1134&quot; &quot;min1135&quot; &quot;min1136&quot; &quot;min1137&quot; &quot;min1138&quot; &quot;min1139&quot; &quot;min1140&quot;
+## [1142] &quot;min1141&quot; &quot;min1142&quot; &quot;min1143&quot; &quot;min1144&quot; &quot;min1145&quot; &quot;min1146&quot; &quot;min1147&quot;
+## [1149] &quot;min1148&quot; &quot;min1149&quot; &quot;min1150&quot; &quot;min1151&quot; &quot;min1152&quot; &quot;min1153&quot; &quot;min1154&quot;
+## [1156] &quot;min1155&quot; &quot;min1156&quot; &quot;min1157&quot; &quot;min1158&quot; &quot;min1159&quot; &quot;min1160&quot; &quot;min1161&quot;
+## [1163] &quot;min1162&quot; &quot;min1163&quot; &quot;min1164&quot; &quot;min1165&quot; &quot;min1166&quot; &quot;min1167&quot; &quot;min1168&quot;
+## [1170] &quot;min1169&quot; &quot;min1170&quot; &quot;min1171&quot; &quot;min1172&quot; &quot;min1173&quot; &quot;min1174&quot; &quot;min1175&quot;
+## [1177] &quot;min1176&quot; &quot;min1177&quot; &quot;min1178&quot; &quot;min1179&quot; &quot;min1180&quot; &quot;min1181&quot; &quot;min1182&quot;
+## [1184] &quot;min1183&quot; &quot;min1184&quot; &quot;min1185&quot; &quot;min1186&quot; &quot;min1187&quot; &quot;min1188&quot; &quot;min1189&quot;
+## [1191] &quot;min1190&quot; &quot;min1191&quot; &quot;min1192&quot; &quot;min1193&quot; &quot;min1194&quot; &quot;min1195&quot; &quot;min1196&quot;
+## [1198] &quot;min1197&quot; &quot;min1198&quot; &quot;min1199&quot; &quot;min1200&quot; &quot;min1201&quot; &quot;min1202&quot; &quot;min1203&quot;
+## [1205] &quot;min1204&quot; &quot;min1205&quot; &quot;min1206&quot; &quot;min1207&quot; &quot;min1208&quot; &quot;min1209&quot; &quot;min1210&quot;
+## [1212] &quot;min1211&quot; &quot;min1212&quot; &quot;min1213&quot; &quot;min1214&quot; &quot;min1215&quot; &quot;min1216&quot; &quot;min1217&quot;
+## [1219] &quot;min1218&quot; &quot;min1219&quot; &quot;min1220&quot; &quot;min1221&quot; &quot;min1222&quot; &quot;min1223&quot; &quot;min1224&quot;
+## [1226] &quot;min1225&quot; &quot;min1226&quot; &quot;min1227&quot; &quot;min1228&quot; &quot;min1229&quot; &quot;min1230&quot; &quot;min1231&quot;
+## [1233] &quot;min1232&quot; &quot;min1233&quot; &quot;min1234&quot; &quot;min1235&quot; &quot;min1236&quot; &quot;min1237&quot; &quot;min1238&quot;
+## [1240] &quot;min1239&quot; &quot;min1240&quot; &quot;min1241&quot; &quot;min1242&quot; &quot;min1243&quot; &quot;min1244&quot; &quot;min1245&quot;
+## [1247] &quot;min1246&quot; &quot;min1247&quot; &quot;min1248&quot; &quot;min1249&quot; &quot;min1250&quot; &quot;min1251&quot; &quot;min1252&quot;
+## [1254] &quot;min1253&quot; &quot;min1254&quot; &quot;min1255&quot; &quot;min1256&quot; &quot;min1257&quot; &quot;min1258&quot; &quot;min1259&quot;
+## [1261] &quot;min1260&quot; &quot;min1261&quot; &quot;min1262&quot; &quot;min1263&quot; &quot;min1264&quot; &quot;min1265&quot; &quot;min1266&quot;
+## [1268] &quot;min1267&quot; &quot;min1268&quot; &quot;min1269&quot; &quot;min1270&quot; &quot;min1271&quot; &quot;min1272&quot; &quot;min1273&quot;
+## [1275] &quot;min1274&quot; &quot;min1275&quot; &quot;min1276&quot; &quot;min1277&quot; &quot;min1278&quot; &quot;min1279&quot; &quot;min1280&quot;
+## [1282] &quot;min1281&quot; &quot;min1282&quot; &quot;min1283&quot; &quot;min1284&quot; &quot;min1285&quot; &quot;min1286&quot; &quot;min1287&quot;
+## [1289] &quot;min1288&quot; &quot;min1289&quot; &quot;min1290&quot; &quot;min1291&quot; &quot;min1292&quot; &quot;min1293&quot; &quot;min1294&quot;
+## [1296] &quot;min1295&quot; &quot;min1296&quot; &quot;min1297&quot; &quot;min1298&quot; &quot;min1299&quot; &quot;min1300&quot; &quot;min1301&quot;
+## [1303] &quot;min1302&quot; &quot;min1303&quot; &quot;min1304&quot; &quot;min1305&quot; &quot;min1306&quot; &quot;min1307&quot; &quot;min1308&quot;
+## [1310] &quot;min1309&quot; &quot;min1310&quot; &quot;min1311&quot; &quot;min1312&quot; &quot;min1313&quot; &quot;min1314&quot; &quot;min1315&quot;
+## [1317] &quot;min1316&quot; &quot;min1317&quot; &quot;min1318&quot; &quot;min1319&quot; &quot;min1320&quot; &quot;min1321&quot; &quot;min1322&quot;
+## [1324] &quot;min1323&quot; &quot;min1324&quot; &quot;min1325&quot; &quot;min1326&quot; &quot;min1327&quot; &quot;min1328&quot; &quot;min1329&quot;
+## [1331] &quot;min1330&quot; &quot;min1331&quot; &quot;min1332&quot; &quot;min1333&quot; &quot;min1334&quot; &quot;min1335&quot; &quot;min1336&quot;
+## [1338] &quot;min1337&quot; &quot;min1338&quot; &quot;min1339&quot; &quot;min1340&quot; &quot;min1341&quot; &quot;min1342&quot; &quot;min1343&quot;
+## [1345] &quot;min1344&quot; &quot;min1345&quot; &quot;min1346&quot; &quot;min1347&quot; &quot;min1348&quot; &quot;min1349&quot; &quot;min1350&quot;
+## [1352] &quot;min1351&quot; &quot;min1352&quot; &quot;min1353&quot; &quot;min1354&quot; &quot;min1355&quot; &quot;min1356&quot; &quot;min1357&quot;
+## [1359] &quot;min1358&quot; &quot;min1359&quot; &quot;min1360&quot; &quot;min1361&quot; &quot;min1362&quot; &quot;min1363&quot; &quot;min1364&quot;
+## [1366] &quot;min1365&quot; &quot;min1366&quot; &quot;min1367&quot; &quot;min1368&quot; &quot;min1369&quot; &quot;min1370&quot; &quot;min1371&quot;
+## [1373] &quot;min1372&quot; &quot;min1373&quot; &quot;min1374&quot; &quot;min1375&quot; &quot;min1376&quot; &quot;min1377&quot; &quot;min1378&quot;
+## [1380] &quot;min1379&quot; &quot;min1380&quot; &quot;min1381&quot; &quot;min1382&quot; &quot;min1383&quot; &quot;min1384&quot; &quot;min1385&quot;
+## [1387] &quot;min1386&quot; &quot;min1387&quot; &quot;min1388&quot; &quot;min1389&quot; &quot;min1390&quot; &quot;min1391&quot; &quot;min1392&quot;
+## [1394] &quot;min1393&quot; &quot;min1394&quot; &quot;min1395&quot; &quot;min1396&quot; &quot;min1397&quot; &quot;min1398&quot; &quot;min1399&quot;
+## [1401] &quot;min1400&quot; &quot;min1401&quot; &quot;min1402&quot; &quot;min1403&quot; &quot;min1404&quot; &quot;min1405&quot; &quot;min1406&quot;
+## [1408] &quot;min1407&quot; &quot;min1408&quot; &quot;min1409&quot; &quot;min1410&quot; &quot;min1411&quot; &quot;min1412&quot; &quot;min1413&quot;
+## [1415] &quot;min1414&quot; &quot;min1415&quot; &quot;min1416&quot; &quot;min1417&quot; &quot;min1418&quot; &quot;min1419&quot; &quot;min1420&quot;
+## [1422] &quot;min1421&quot; &quot;min1422&quot; &quot;min1423&quot; &quot;min1424&quot; &quot;min1425&quot; &quot;min1426&quot; &quot;min1427&quot;
+## [1429] &quot;min1428&quot; &quot;min1429&quot; &quot;min1430&quot; &quot;min1431&quot; &quot;min1432&quot; &quot;min1433&quot; &quot;min1434&quot;
+## [1436] &quot;min1435&quot; &quot;min1436&quot; &quot;min1437&quot; &quot;min1438&quot; &quot;min1439&quot; &quot;min1440&quot;</code></pre>
+<pre class="r"><code>janitor::clean_names(MIMS_ac_df)</code></pre>
+<pre><code>## # A tibble: 250 × 1,441
+##     seqn  min1  min2  min3  min4   min5   min6  min7   min8    min9  min10
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
+##  1 62161 1.11  3.12  1.47  0.938 1.60   0.145  2.10  0.509   1.63   1.20  
+##  2 62164 1.92  1.67  2.38  0.935 2.59   5.22   2.39  4.90    1.97   3.13  
+##  3 62169 5.85  5.18  4.76  6.48  6.85   7.24   6.12  7.48    5.47   6.49  
+##  4 62174 5.42  3.48  3.72  3.81  6.85   4.45   0.561 1.61    0.698  2.72  
+##  5 62177 6.14  8.06  9.99  6.60  4.57   2.78   7.10  7.25   10.1    7.49  
+##  6 62178 0.167 0.429 0.131 1.20  0.0796 0.0487 0.106 0.0653  0.0564 0.0639
+##  7 62180 0.039 0     0     0     0.369  0.265  0.506 0.638   0      0.011 
+##  8 62184 1.55  2.81  3.86  4.76  6.10   7.61   4.74  6.73    5.42   4.24  
+##  9 62186 3.08  2.54  2.63  2.12  1.14   1.68   2.84  2.72    2.13   2.18  
+## 10 62189 2.81  0.195 0.163 0     0.144  0.180  0.870 0.214   0      0     
+## # ℹ 240 more rows
+## # ℹ 1,430 more variables: min11 &lt;dbl&gt;, min12 &lt;dbl&gt;, min13 &lt;dbl&gt;, min14 &lt;dbl&gt;,
+## #   min15 &lt;dbl&gt;, min16 &lt;dbl&gt;, min17 &lt;dbl&gt;, min18 &lt;dbl&gt;, min19 &lt;dbl&gt;,
+## #   min20 &lt;dbl&gt;, min21 &lt;dbl&gt;, min22 &lt;dbl&gt;, min23 &lt;dbl&gt;, min24 &lt;dbl&gt;,
+## #   min25 &lt;dbl&gt;, min26 &lt;dbl&gt;, min27 &lt;dbl&gt;, min28 &lt;dbl&gt;, min29 &lt;dbl&gt;,
+## #   min30 &lt;dbl&gt;, min31 &lt;dbl&gt;, min32 &lt;dbl&gt;, min33 &lt;dbl&gt;, min34 &lt;dbl&gt;,
+## #   min35 &lt;dbl&gt;, min36 &lt;dbl&gt;, min37 &lt;dbl&gt;, min38 &lt;dbl&gt;, min39 &lt;dbl&gt;, …</code></pre>
 </div>
+</div>
+<div id="problem-3-citi-bike-data" class="section level1">
+<h1>Problem 3 Citi Bike Data</h1>
+<p>Loading data sets</p>
+<pre class="r"><code>Jan2020_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw3_hy2912/Jan2020.CITI.csv&quot;, na = c(&quot;.&quot;, &quot;NA&quot;, &quot;&quot;))</code></pre>
+<pre><code>## Rows: 12420 Columns: 7
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (6): ride_id, rideable_type, weekdays, start_station_name, end_station_n...
+## dbl (1): duration
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>Jul2020_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw3_hy2912/July2020.CITI.csv&quot;, na = c(&quot;.&quot;, &quot;NA&quot;, &quot;&quot;))</code></pre>
+<pre><code>## Rows: 21048 Columns: 7
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (6): ride_id, rideable_type, weekdays, start_station_name, end_station_n...
+## dbl (1): duration
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>Jan2024_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw3_hy2912/Jan2024.CITI.csv&quot;, na = c(&quot;.&quot;, &quot;NA&quot;, &quot;&quot;))</code></pre>
+<pre><code>## Rows: 18861 Columns: 7
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (6): ride_id, rideable_type, weekdays, start_station_name, end_station_n...
+## dbl (1): duration
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>Jul2024_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw3_hy2912/July2024.CITI.csv&quot;, na = c(&quot;.&quot;, &quot;NA&quot;, &quot;&quot;))</code></pre>
+<pre><code>## Rows: 47156 Columns: 7
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (6): ride_id, rideable_type, weekdays, start_station_name, end_station_n...
+## dbl (1): duration
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<p>Basic cleaning of data sets</p>
+<pre class="r"><code>Jan2020_df = janitor::clean_names (Jan2020_df)
+names(Jan2020_df)</code></pre>
+<pre><code>## [1] &quot;ride_id&quot;            &quot;rideable_type&quot;      &quot;weekdays&quot;          
+## [4] &quot;duration&quot;           &quot;start_station_name&quot; &quot;end_station_name&quot;  
+## [7] &quot;member_casual&quot;</code></pre>
+<pre class="r"><code>Jul2020_df = janitor::clean_names (Jul2020_df)
+names(Jul2020_df)</code></pre>
+<pre><code>## [1] &quot;ride_id&quot;            &quot;rideable_type&quot;      &quot;weekdays&quot;          
+## [4] &quot;duration&quot;           &quot;start_station_name&quot; &quot;end_station_name&quot;  
+## [7] &quot;member_casual&quot;</code></pre>
+<pre class="r"><code>Jan2024_df = janitor::clean_names (Jan2024_df)
+names(Jan2024_df)</code></pre>
+<pre><code>## [1] &quot;ride_id&quot;            &quot;rideable_type&quot;      &quot;weekdays&quot;          
+## [4] &quot;duration&quot;           &quot;start_station_name&quot; &quot;end_station_name&quot;  
+## [7] &quot;member_casual&quot;</code></pre>
+<pre class="r"><code>Jul2024_df = janitor::clean_names (Jul2024_df)
+names(Jul2024_df)</code></pre>
+<pre><code>## [1] &quot;ride_id&quot;            &quot;rideable_type&quot;      &quot;weekdays&quot;          
+## [4] &quot;duration&quot;           &quot;start_station_name&quot; &quot;end_station_name&quot;  
+## [7] &quot;member_casual&quot;</code></pre>
 </div>
 
 
