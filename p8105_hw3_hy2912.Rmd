@@ -5,7 +5,6 @@ date: "2024-10-04"
 output: html_document
 ---
 ```{r}
-library(dplyr) 
 library(readr)
 library(tidyverse)
 library(ggridges)
@@ -18,25 +17,57 @@ library(p8105.datasets)
   data("ny_noaa")
 ```
 
-Importing MIMS Demographic data
-```{r}
-MIMS_dg_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw3_hy2912/MIMS.dg.csv", skip = 4, na = c(".", "NA", ""))
-```
-```{r}
-names(MIMS_dg_df)
-janitor::clean_names(MIMS_dg_df)
-```
 # Problem 2 
 #### MIMS Data
 
-Loading MIMS Accelerometer data 
+Importing MIMS Demographic data
 ```{r}
-MIMS_ac_df = read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw3_hy2912/MIMS.ac.csv", na = c(".", "NA", ""))
+MIMS_dg_df = 
+  read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw3_hy2912/MIMS.dg.csv", 
+           skip = 4, na = c(".", "NA", ""), 
+    col_types = cols(
+      'SEQN' = col_character(),
+      `sex` = col_character(),
+      `age` = col_integer(),
+      `BMI` = col_double(),
+      `education` = col_character(),
+    )
+  )
 ```
+
+```{r}
+names(MIMS_dg_df)
+MIMS_df_df = janitor::clean_names(MIMS_dg_df)
+```
+
+Importing MIMS Accelerometer data 
+```{r}
+MIMS_ac_df = 
+  read_csv(file = "/Users/helenyousaf/Desktop/p8105_hw3_hy2912/MIMS.ac.csv", 
+           na = c(".", "NA", ""), 
+     col_types = cols(
+      'SEQN' = col_character(),
+    )
+  )       
+```
+
 ```{r}
 names(MIMS_ac_df)
-janitor::clean_names(MIMS_ac_df)
+MIMS_ac_df = janitor::clean_names(MIMS_ac_df)
 ```
+
+Joining data sets
+```{r}
+nhanes_data <- MIMS_dg_df |>
+  filter(age >= 21) |>
+  drop_na() |>
+  left_join(MIMS_ac_df, by = "seqn") |>
+  mutate(
+    gender = factor(sex, levels = c("1", "2")),
+    education = factor(education, levels = c("1", "2", "3"))
+  )
+```
+
 
 # Problem 3
 #### Citi Bike Data 
@@ -66,4 +97,26 @@ Jul2024_df = janitor::clean_names (Jul2024_df)
 names(Jul2024_df)
 ```
 
+```{r}
+Jan2020_df = drop_na(Jan2020_df)
+```
+
+```{r}
+Jan2020_df = 
+  col_types = cols(
+      member_casual = col_character() 
+  )
+```
+
+```{r}
+Jan2020_df = 
+  mutate(
+    member_casual = 
+      case_match(
+        member_casual, 
+        1 ~ "casual", 
+        2 ~ "member")
+  
+```
+  
 

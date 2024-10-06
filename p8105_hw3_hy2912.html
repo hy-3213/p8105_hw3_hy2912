@@ -357,23 +357,14 @@ display: none;
 </div>
 
 
-<pre class="r"><code>library(dplyr) </code></pre>
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>library(readr)
 library(tidyverse)</code></pre>
 <pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ purrr     1.0.2
 ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
 ## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
 ## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-## ✔ purrr     1.0.2</code></pre>
-<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
@@ -384,8 +375,14 @@ library(tidyverse)</code></pre>
 <h4>NY NOAA Data</h4>
 <pre class="r"><code>library(p8105.datasets)
   data(&quot;ny_noaa&quot;)</code></pre>
+</div>
+</div>
+<div id="problem-2" class="section level1">
+<h1>Problem 2</h1>
+<div id="mims-data" class="section level4">
+<h4>MIMS Data</h4>
 <p>Importing MIMS Demographic data</p>
-<pre class="r"><code>MIMS_dg_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw3_hy2912/MIMS.dg.csv&quot;, skip = 4, na = c(&quot;.&quot;, &quot;NA&quot;, &quot;&quot;))</code></pre>
+<pre class="r"><code>MIMS_dg_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw3_hy2912/MIMS.dg.csv&quot;, skip = 4, na = c(&quot;.&quot;, &quot;NA&quot;, &quot;&quot;)) </code></pre>
 <pre><code>## Rows: 250 Columns: 5
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
@@ -410,13 +407,8 @@ library(tidyverse)</code></pre>
 ##  9 62186     2    17  22.9        NA
 ## 10 62189     2    30  22.4         3
 ## # ℹ 240 more rows</code></pre>
-</div>
-</div>
-<div id="problem-2" class="section level1">
-<h1>Problem 2</h1>
-<div id="mims-data" class="section level4">
-<h4>MIMS Data</h4>
-<p>Loading MIMS Accelerometer data</p>
+<pre class="r"><code>MIMS_dg_df = drop_na(MIMS_dg_df) </code></pre>
+<p>Importing MIMS Accelerometer data</p>
 <pre class="r"><code>MIMS_ac_df = read_csv(file = &quot;/Users/helenyousaf/Desktop/p8105_hw3_hy2912/MIMS.ac.csv&quot;, na = c(&quot;.&quot;, &quot;NA&quot;, &quot;&quot;))</code></pre>
 <pre><code>## Rows: 250 Columns: 1441
 ## ── Column specification ────────────────────────────────────────────────────────
@@ -653,6 +645,7 @@ library(tidyverse)</code></pre>
 ## #   min25 &lt;dbl&gt;, min26 &lt;dbl&gt;, min27 &lt;dbl&gt;, min28 &lt;dbl&gt;, min29 &lt;dbl&gt;,
 ## #   min30 &lt;dbl&gt;, min31 &lt;dbl&gt;, min32 &lt;dbl&gt;, min33 &lt;dbl&gt;, min34 &lt;dbl&gt;,
 ## #   min35 &lt;dbl&gt;, min36 &lt;dbl&gt;, min37 &lt;dbl&gt;, min38 &lt;dbl&gt;, min39 &lt;dbl&gt;, …</code></pre>
+<pre class="r"><code>MIMS_ac_df = drop_na(MIMS_ac_df)</code></pre>
 </div>
 </div>
 <div id="problem-3" class="section level1">
